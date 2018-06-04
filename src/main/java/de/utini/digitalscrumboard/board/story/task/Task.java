@@ -1,8 +1,14 @@
 package de.utini.digitalscrumboard.board.story.task;
 
+import de.utini.digitalscrumboard.board.state.State;
+import de.utini.digitalscrumboard.board.story.Story;
+import de.utini.digitalscrumboard.user.User;
+
+import java.util.LinkedList;
+
 public class Task extends de.utini.digitalscrumboard.board.story.Issue {
     Story story;
-    List<User> assignee;
+    LinkedList<User> assignee;
     State state;
 
     public Story getStory() {
@@ -13,11 +19,11 @@ public class Task extends de.utini.digitalscrumboard.board.story.Issue {
         this.story = story;
     }
 
-    public List<User> getAssignee() {
+    public LinkedList<User> getAssignee() {
         return assignee;
     }
 
-    public void setAssignee(List<User> assignee) {
+    public void setAssignee(LinkedList<User> assignee) {
         this.assignee = assignee;
     }
 
