@@ -44,12 +44,6 @@ public class User {
      * @return The DTO of User.
      */
     public UserDTO exportDTO() {
-        UserDTO dto = new UserDTO();
-
-        dto.setId(getId());
-        dto.setName(getName());
-        dto.setRole(getRole());
-
-        return dto;
+        return new UserDTO(id, name, role);
     }
 }
