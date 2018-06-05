@@ -1,8 +1,23 @@
 package de.utini.digitalscrumboard.board.state;
 
+import de.utini.digitalscrumboard.board.Board;
+import de.utini.digitalscrumboard.board.story.task.Task;
+
+import javax.persistence.*;
+import java.util.List;
+
+@Entity
+@Table(name="states")
 public class State {
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
     private Integer id;
     private String name;
+    @ManyToOne
+    @JoinColumn(name = "board_id")
+    private Board board;
+    @OneToMany(mappedBy = "state")
+    private List<Task> tasks;
 
     public Integer getId() {
         return id;

@@ -1,8 +1,11 @@
 package de.utini.digitalscrumboard.user;
 
-import javax.persistence.*;
+import de.utini.digitalscrumboard.board.story.task.Task;
 
-@Entity
+import javax.persistence.*;
+import java.util.List;
+
+@Entity(name = "User")
 @Table(name = "users")
 public class User {
 
@@ -14,6 +17,9 @@ public class User {
 
     private String role;
 
+    @OneToMany
+    @JoinColumn(name = "task_id")
+    private List<Task> tasks;
 
     public Integer getId() {
         return id;
@@ -54,5 +60,13 @@ public class User {
      */
     public UserDTO exportDTO() {
         return new UserDTO(id, name, role);
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 }

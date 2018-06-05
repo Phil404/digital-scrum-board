@@ -1,15 +1,12 @@
 package de.utini.digitalscrumboard.board.story;
-import de.utini.digitalscrumboard.board.story.task.Task;
+
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 public abstract class Issue {
 
-    int id;
+    Integer id;
     String title;
     String description;
-    LinkedList<Task> relations;
     Date startDate;
     Date createDate;
     Date doneDate;
@@ -36,14 +33,6 @@ public abstract class Issue {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public LinkedList<Task> getRelations() {
-        return relations;
-    }
-
-    public void setRelations(LinkedList<Task> relations) {
-        this.relations = relations;
     }
 
     public Date getStartDate() {

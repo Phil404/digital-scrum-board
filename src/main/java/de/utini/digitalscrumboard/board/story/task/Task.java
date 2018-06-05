@@ -4,26 +4,30 @@ import de.utini.digitalscrumboard.board.state.State;
 import de.utini.digitalscrumboard.board.story.Story;
 import de.utini.digitalscrumboard.user.User;
 
+import javax.persistence.*;
 import java.util.LinkedList;
 
+@Entity
+@Table(name = "tasks")
 public class Task extends de.utini.digitalscrumboard.board.story.Issue {
-    Story story;
-    LinkedList<User> assignee;
-    State state;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    private Integer id;
+    @ManyToOne
+    @JoinColumn(name = "story_id")
+    private Story story;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User assignee;
+    @ManyToOne
+    @JoinColumn(name = "task_id")
+    private State state;
 
-    public Story getStory() {
-        return story;
-    }
-
-    public void setStory(Story story) {
-        this.story = story;
-    }
-
-    public LinkedList<User> getAssignee() {
+    public User getAssignee() {
         return assignee;
     }
 
-    public void setAssignee(LinkedList<User> assignee) {
+    public void setAssignee(User assignee) {
         this.assignee = assignee;
     }
 
@@ -35,10 +39,18 @@ public class Task extends de.utini.digitalscrumboard.board.story.Issue {
         this.state = state;
     }
 
-    public void importDTO{
+    public void importDTO(){
 
     }
-    public void exportDTO{
+    public void exportDTO(){
 
+    }
+
+    public Story getStory() {
+        return story;
+    }
+
+    public void setStory(Story story) {
+        this.story = story;
     }
 }
