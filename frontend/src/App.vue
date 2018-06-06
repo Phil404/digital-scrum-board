@@ -10,7 +10,12 @@
                     <b-row v-for="story in board.stories" :key="story.id">
                         <b-col>{{ story.title }}</b-col>
                         <b-col v-for="state in board.states" :key="state.id">
-                            <b-card v-show="insertTask(state,task)" :title="task.title" v-for="task in story.tasks">{{insertTask(state,task)}}</b-card>
+                            <b-card v-show="insertTask(state,task)" :title="task.title" v-for="task in story.tasks" :key="task.id">
+                                {{insertTask(state,task)}}
+                                <br >
+                                <b-button :size="sm" :variant="secondary"><-</b-button>
+                                <b-button :size="sm" :variant="secondary">-></b-button>
+                            </b-card>
                         </b-col>
                     </b-row>
                 </b-container>
@@ -147,9 +152,5 @@
 
     a {
         color: #42b983;
-    }
-
-    b-row {
-        background-color: grey;
     }
 </style>
