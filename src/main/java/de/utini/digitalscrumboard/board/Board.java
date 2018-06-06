@@ -1,11 +1,14 @@
 package de.utini.digitalscrumboard.board;
 
 import de.utini.digitalscrumboard.board.state.State;
+import de.utini.digitalscrumboard.board.story.Issue;
 import de.utini.digitalscrumboard.board.story.Story;
 
 import javax.persistence.*;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "boards")
@@ -18,6 +21,14 @@ public class Board {
     @OneToMany(mappedBy = "board")
     private List<State> columns;
     private String name;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public List<Story> getRows() {
         return rows;
@@ -44,10 +55,10 @@ public class Board {
     }
 
     public void importDTO(BoardDTO dto) {
-
+        this.name = dto.getName();
     }
 
     public BoardDTO exportDTO() {
-        return null;
+        return new BoardDTO(id, name);
     }
 }
