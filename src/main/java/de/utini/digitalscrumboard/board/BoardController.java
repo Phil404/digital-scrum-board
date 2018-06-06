@@ -31,9 +31,10 @@ public class BoardController {
         boardRepository.save(board);
 
         return ResponseEntity.created(URI.create(ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/" + board.getId())
-                .toUriString())).build();
+                    .fromCurrentRequest()
+                    .path("/" + board.getId())
+                    .toUriString())
+                ).build();
     }
 
     @GetMapping("/rest/boards/{boardId}")
