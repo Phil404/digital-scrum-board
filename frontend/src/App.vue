@@ -2,7 +2,7 @@
     <div id="board">
         <b-tabs>
             <b-tab v-for="board in dumyBoard" :key="board.id" :title="board.name" active>
-                <b-container fluid class="">
+                <b-container fluid>
                     <b-row>
                         <b-col></b-col>
                         <b-col v-for="state in board.states" :key="state.id">{{ state.name }}</b-col>
@@ -10,7 +10,7 @@
                     <b-row v-for="story in board.stories" :key="story.id">
                         <b-col>{{ story.title }}</b-col>
                         <b-col v-for="state in board.states" :key="state.id">
-                            <p v-for="task in story.tasks">{{insertTask(state,task)}}</p>
+                            <b-card v-show="insertTask(state,task)" :title="task.title" v-for="task in story.tasks">{{insertTask(state,task)}}</b-card>
                         </b-col>
                     </b-row>
                 </b-container>
@@ -109,9 +109,9 @@
         methods: {
             insertTask: function (state, task) {
                 if (state.id === task.state) {
-                    return task
+                    return task.description
                 }
-                return null;
+                return false;
             }
         },
         mounted() {
@@ -149,7 +149,7 @@
         color: #42b983;
     }
 
-    .grid {
-        border: 1px solid grey;
+    b-row {
+        background-color: grey;
     }
 </style>
