@@ -4,11 +4,11 @@
             <b-tab v-for="board in dummyBoard" :key="board.id" :title="board.name" active>
                 <b-container fluid>
                     <b-row>
-                        <b-col></b-col>
+                        <b-col :cols="storyTitleCols"></b-col>
                         <b-col v-for="state in board.states" :key="state.id">{{ state.name }}</b-col>
                     </b-row>
                     <b-row v-for="story in board.stories" :key="story.id">
-                        <b-col>
+                        <b-col :cols="storyTitleCols">
                             <b>{{ story.title }}</b>
                             <br>
                             {{ story.description }}
@@ -16,9 +16,9 @@
                         <b-col v-for="state in board.states" :key="state.id">
                             <b-card v-show="insertTask(state,task)" :title="task.title" v-for="task in story.tasks"
                                     :key="task.id">
-                                <b-container v-on:click="showTaskModal(board, task)">
+                                <div v-on:click="showTaskModal(board, task)">
                                     {{insertTask(state,task)}}
-                                </b-container>
+                                </div>
                                 <br>
                                 <b-button v-on:click="moveTaskLeft(board,task)" size="sm" variant="secondary"><-
                                 </b-button>
@@ -30,14 +30,25 @@
                 </b-container>
             </b-tab>
         </b-tabs>
-        <b-modal v-bind="taskModalDataContainer" ref="taskModal" :title="taskModalDataContainer.title">
+        <b-modal  v-bind="taskModalDataContainer" ref="taskModal" :title="taskModalDataContainer.title">
             <b-container>
                 <b-row>
-                    {{taskModalDataContainer.description}}
+                    <b-col>
+                        <b>Description</b>
+                        <br>
+                        {{taskModalDataContainer.description}}
+                    </b-col>
+                    <b-col cols="4">
+                        <b>Assigness:</b>
+                        <ul>
+                            <li v-for="assignee in taskModalDataContainer.assignee">
+                                {{assignee.name}}
+                            </li>
+                        </ul>
+                    </b-col>
                 </b-row>
-
             </b-container>
-
+            <b-container slot="modal-footer"><b-button size="sm" variant="primary" v-on:click="hideModal">Close</b-button></b-container>
         </b-modal>
     </div>
 
@@ -49,7 +60,24 @@
         name: 'app',
         data() {
             return {
+                //DO NOT DELETE, NO DUMMYOBJECTS
+                storyTitleCols: 1,
                 taskModalDataContainer: {},
+                //UNTIL HERE
+
+                users: [
+                    {
+                        id: 1,
+                        name: "John Doe",
+                        role: "Developer"
+                    },
+                    {
+                        id: 2,
+                        name: "Aria Stark",
+                        role: "QA"
+                    }
+
+                ],
                 dummyBoard:
                     [
                         {
@@ -143,6 +171,20 @@
                 this.taskModalDataContainer = task;
                 this.taskModalDataContainer.id = this.taskModalDataContainer.index;
                 delete this.taskModalDataContainer.id;
+
+                let users = this.users;
+                let container = this.taskModalDataContainer;
+                let assignees = [];
+                container.assignee.forEach(function (assignee) {
+                    console.log(assignee)
+                    users.forEach(function (user) {
+                        if (assignee === user.id) {
+                            assignees.push(user);
+                        }
+                    })
+                });
+                container.assignee = assignees;
+                this.taskModalDataContainer = container;
                 this.$refs.taskModal.show();
             },
             moveTaskRight: function (board, task) {
@@ -156,10 +198,12 @@
                 } else {
                     return false;
                 }
+            },
+            hideModal: function() {
+                this.$refs.taskModal.hide();
             }
         },
-        mounted() {
-        }
+        computed: {}
     }
 </script>
 
