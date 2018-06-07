@@ -102,11 +102,18 @@ public class Task {
         this.state = state;
     }
 
-    public void importDTO(){
-
+    public void importDTO(TaskDTO dto){
+        this.title = dto.getTitle();
+        this.description = dto.getDescription();
+        this.startDate = dto.getStartDate();
+        this.createDate = dto.getCreateDate();
+        this.doneDate = dto.getDoneDate();
     }
-    public void exportDTO(){
 
+    public TaskDTO exportDTO(){
+        Integer assigneeId = assignee != null ? assignee.getId() : null;
+        Integer stateId = state != null ? state.getId() : null;
+        return new TaskDTO(assigneeId, stateId, id, title, description, startDate, createDate, doneDate);
     }
 
     public Story getStory() {
