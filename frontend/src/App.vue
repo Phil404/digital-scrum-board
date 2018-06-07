@@ -1,27 +1,47 @@
 <template>
     <div id="board">
         <b-tabs>
-            <b-tab v-for="board in dumyBoard" :key="board.id" :title="board.name" active>
+            <b-tab v-for="board in dummyBoard" :key="board.id" :title="board.name" active>
                 <b-container fluid>
                     <b-row>
                         <b-col></b-col>
                         <b-col v-for="state in board.states" :key="state.id">{{ state.name }}</b-col>
                     </b-row>
                     <b-row v-for="story in board.stories" :key="story.id">
-                        <b-col>{{ story.title }}</b-col>
+                        <b-col>
+                            <b>{{ story.title }}</b>
+                            <br>
+                            {{ story.description }}
+                        </b-col>
                         <b-col v-for="state in board.states" :key="state.id">
-                            <b-card v-show="insertTask(state,task)" :title="task.title" v-for="task in story.tasks" :key="task.id">
-                                {{insertTask(state,task)}}
-                                <br >
-                                <b-button :size="sm" :variant="secondary"><-</b-button>
-                                <b-button :size="sm" :variant="secondary">-></b-button>
+                            <b-card v-show="insertTask(state,task)" :title="task.title" v-for="task in story.tasks"
+                                    :key="task.id">
+                                <b-container v-on:click="showTaskModal(board, task)">
+                                    {{insertTask(state,task)}}
+                                </b-container>
+                                <br>
+                                <b-button v-on:click="moveTaskLeft(board,task)" size="sm" variant="secondary"><-
+                                </b-button>
+                                <b-button v-on:click="moveTaskRight(board, task)" size="sm" variant="secondary">->
+                                </b-button>
                             </b-card>
                         </b-col>
                     </b-row>
                 </b-container>
             </b-tab>
         </b-tabs>
+        <b-modal v-bind="taskModalDataContainer" ref="taskModal" :title="taskModalDataContainer.title">
+            <b-container>
+                <b-row>
+                    {{taskModalDataContainer.description}}
+                </b-row>
+
+            </b-container>
+
+        </b-modal>
     </div>
+
+
 </template>
 
 <script>
@@ -29,7 +49,8 @@
         name: 'app',
         data() {
             return {
-                dumyBoard:
+                taskModalDataContainer: {},
+                dummyBoard:
                     [
                         {
                             id: 1,
@@ -117,12 +138,28 @@
                     return task.description
                 }
                 return false;
+            },
+            showTaskModal: function (board, task) {
+                this.taskModalDataContainer = task;
+                this.taskModalDataContainer.id = this.taskModalDataContainer.index;
+                delete this.taskModalDataContainer.id;
+                this.$refs.taskModal.show();
+            },
+            moveTaskRight: function (board, task) {
+                if (task.state < board.states.length) {
+                    task.state += 1;
+                }
+            },
+            moveTaskLeft: function (board, task) {
+                if (task.state > 1) {
+                    task.state -= 1;
+                } else {
+                    return false;
+                }
             }
         },
         mounted() {
-
         }
-
     }
 </script>
 
@@ -152,5 +189,10 @@
 
     a {
         color: #42b983;
+    }
+
+    taskCard:hover {
+        background-color: lightgrey;
+        cursor: pointer;
     }
 </style>
