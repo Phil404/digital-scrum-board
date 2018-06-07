@@ -53,12 +53,4 @@ public class BoardController {
 
         return ResponseEntity.noContent().build();
     }
-
-    @DeleteMapping("/rest/boards/{boardId}")
-    public ResponseEntity deleteBoard(@PathVariable("boardId") Integer boardId) {
-        // TODO: Löschstrategie...
-        boardRepository.deleteById(boardId);
-
-        return ResponseEntity.noContent().build();
-    }
 }

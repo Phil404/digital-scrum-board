@@ -35,7 +35,7 @@ public class Task {
     private User assignee;
 
     @ManyToOne
-    @JoinColumn(name = "task_id")
+    @JoinColumn(name = "state_id")
     private State state;
 
     public Integer getId() {
