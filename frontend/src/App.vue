@@ -11,7 +11,9 @@
                         <b-col :cols="storyTitleCols">
                             <b>{{ story.title }}</b>
                             <br>
-                            {{ story.description }}
+                            {{ story.description }}<br>
+                            <b-btn v-on:click="" size="sm" variant="primary"> Add Task</b-btn>
+                            <b-btn v-on:click="showStoryModal(board, story)" size="sm" variant="secondary">Info</b-btn>
                         </b-col>
                         <b-col v-for="state in board.states" :key="state.id">
                             <b-card v-show="insertTask(state,task)" :title="task.title" v-for="task in story.tasks"
@@ -30,7 +32,10 @@
                 </b-container>
             </b-tab>
         </b-tabs>
-        <b-modal v-bind="taskModalDataContainer" ref="taskModal" :title="taskModalDataContainer.title">
+        <b-button class="addStoryButton" size="sm" variant="primary" >Add Story</b-button>
+
+
+        <b-modal  size="lg"v-bind="taskModalDataContainer" ref="taskModal" :title="taskModalDataContainer.title">
             <b-container>
                 <b-row>
                     <b-col>
@@ -41,7 +46,7 @@
                     <b-col cols="4">
                         <b>Assigness:</b>
                         <ul>
-                            <li v-for="assignee in taskModalDataContainer.assignee">
+                            <li v-for="assignee in taskModalDataContainer.assignees">
                                 {{assignee.name}}
                             </li>
                         </ul>
@@ -49,7 +54,22 @@
                 </b-row>
             </b-container>
             <b-container slot="modal-footer">
-                <b-button size="sm" variant="primary" v-on:click="hideModal">Close</b-button>
+            </b-container>
+        </b-modal>
+
+        <b-modal size="lg" v-bind="storyModalDataContainer" ref="storyModal" :title="storyModalDataContainer.title">
+            <b-container>
+                <b-col>
+                    <b>Description</b>
+                    <br>
+                    {{storyModalDataContainer.description}}
+                </b-col>
+                <b-col cols="4">
+                    <b>Start Date</b><br>{{ storyModalDataContainer.startDate}}
+                </b-col>
+            </b-container>
+            <b-container slot="modal-footer">
+                <b-button size="sm" variant="primary" v-on:click="hideTaskModal">Close</b-button>
             </b-container>
         </b-modal>
     </div>
@@ -65,6 +85,7 @@
                 //DO NOT DELETE, NO DUMMYOBJECTS
                 storyTitleCols: 1,
                 taskModalDataContainer: {},
+                storyModalDataContainer: {},
                 //UNTIL HERE
 
                 users: [],
@@ -93,29 +114,29 @@
                                     id: 1,
                                     title: "story1",
                                     description: "do shit faster",
-                                    startDate: 23 - 12 - 1993,
-                                    creatDate: 24 - 12 - 1993,
-                                    doneDate: 25 - 12 - 1993,
+                                    startDate: "23 - 12 - 1993",
+                                    creatDate: "24 - 12 - 1993",
+                                    doneDate: "25 - 12 - 1993",
                                     tasks: [
                                         {
                                             id: 1,
                                             state: 1,
-                                            assignee: [1, 2],
+                                            assignees: [1, 2],
                                             title: "task #1",
                                             description: "we need to do some stuff",
-                                            startDate: 23 - 12 - 1994,
-                                            creatDate: 24 - 12 - 1994,
-                                            doneDate: 25 - 12 - 1994
+                                            startDate: "23 - 12 - 1994",
+                                            creatDate: "24 - 12 - 1994",
+                                            doneDate: "25 - 12 - 1994"
                                         },
                                         {
                                             id: 3,
                                             state: 3,
-                                            assignee: [1, 2],
+                                            assignees: [1, 2],
                                             title: "task #1",
                                             description: "we need to do some stuff",
-                                            startDate: 23 - 12 - 1994,
-                                            creatDate: 24 - 12 - 1994,
-                                            doneDate: 25 - 12 - 1994
+                                            startDate: "23 - 12 - 1994",
+                                            creatDate: "24 - 12 - 1994",
+                                            doneDate: "25 - 12 - 1994"
                                         }
                                     ]
                                 },
@@ -123,19 +144,19 @@
                                     id: 3,
                                     title: "story2",
                                     description: "do stuff faster",
-                                    startDate: 12 - 12 - 1993,
-                                    creatDate: 13 - 12 - 1993,
-                                    doneDate: 14 - 12 - 1993,
+                                    startDate: "12 - 12 - 1993",
+                                    creatDate: "13 - 12 - 1993",
+                                    doneDate: "14 - 12 - 1993",
                                     tasks: [
                                         {
                                             id: 2,
                                             state: 2,
-                                            assignee: [1, 2],
+                                            assignees: [1, 2],
                                             title: "Dummytask",
                                             description: "fix bug",
-                                            startDate: 23 - 12 - 1994,
-                                            creatDate: 24 - 12 - 1994,
-                                            doneDate: 25 - 12 - 1994
+                                            startDate: "23 - 12 - 1994",
+                                            creatDate: "24 - 12 - 1994",
+                                            doneDate: "25 - 12 - 1994"
                                         }
                                     ]
                                 }
@@ -213,20 +234,24 @@
                 this.taskModalDataContainer.id = this.taskModalDataContainer.index;
                 delete this.taskModalDataContainer.id;
 
-                let users = this.users;
                 let container = this.taskModalDataContainer;
+                let users = this.users;
+                console.log(task.assignees);
                 let assignees = [];
-                container.assignee.forEach(function (assignee) {
-                    console.log(assignee)
+                taskCopy.assignees.forEach(function (assignee) {
                     users.forEach(function (user) {
                         if (assignee === user.id) {
                             assignees.push(user);
                         }
                     })
                 });
-                container.assignee = assignees;
-                this.taskModalDataContainer = container;
+                container.assignees = assignees;
+                this.taskModalDataContainer = Object.assign({}, container);
                 this.$refs.taskModal.show();
+            },
+            showStoryModal: function (board, story) {
+                this.storyModalDataContainer = story;
+                this.$refs.storyModal.show();
             },
             moveTaskRight: function (board, task) {
                 if (task.state < board.states.length) {
@@ -240,9 +265,6 @@
                     return false;
                 }
             },
-            hideModal: function () {
-                this.$refs.taskModal.hide();
-            }
         },
         computed: {}
     }
@@ -279,5 +301,11 @@
     taskCard:hover {
         background-color: lightgrey;
         cursor: pointer;
+    }
+
+    addStoryButtn {
+        position: fixed;
+        bottom: 0;
+        left: 0;
     }
 </style>
