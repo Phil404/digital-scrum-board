@@ -31,9 +31,11 @@
                         </b-col>
                     </b-row>
                 </b-container>
+                <b-button v-on:click="showAddStoryModal(board)" class="addStoryButton" size="sm" variant="primary">Add Story</b-button>
             </b-tab>
+            <b-button v-on:click="showAddBoardModal()" class="addBoardButton" size="sm" variant="primary">Add Board</b-button>
         </b-tabs>
-        <b-button class="addStoryButton" size="sm" variant="primary" >Add Story</b-button>
+
 
 
         <b-modal size="lg" v-bind="taskModalDataContainer" ref="taskModal" :title="taskModalDataContainer.title">
@@ -88,8 +90,10 @@
         <b-modal size="lg" v-bind="addTaskDataContainer" ref="addTaskModal" title="Add a Task">
             <b-container>
                 <div>
-                    <b-form-input v-model="addTaskDataContainer.taskName" type="text" placeholder="Task Name"></b-form-input>
-                    <b-form-textarea v-model="addTaskDataContainer.description" type="text" placeholder="Task Description" :rows="3"
+                    <b-form-input v-model="addTaskDataContainer.taskName" type="text"
+                                  placeholder="Task Name"></b-form-input>
+                    <b-form-textarea v-model="addTaskDataContainer.description" type="text"
+                                     placeholder="Task Description" :rows="3"
                                      :max-rows="6">>
                     </b-form-textarea>
                     <b-form-select v-model="addTaskDataContainer.assignee" :options="addTaskDataContainer.users"
@@ -98,6 +102,34 @@
             </b-container>
             <b-container slot="modal-footer">
                 <b-button v-on:click="addTask()" variant="primary">Add to Story</b-button>
+            </b-container>
+        </b-modal>
+
+        <b-modal size="lg" v-bind="addStoryDataContainer" ref="addStoryModal" title="Add a Story">
+            <b-container>
+                <div>
+                    <b-form-input v-model="addStoryDataContainer.title" type="text"
+                                  placeholder="Story Name"></b-form-input>
+                    <b-form-textarea v-model="addStoryDataContainer.description" type="text"
+                                     placeholder="Story Description" :rows="3"
+                                     :max-rows="6">
+                    </b-form-textarea>
+                </div>
+            </b-container>
+            <b-container slot="modal-footer">
+                <b-button v-on:click="addStory()" variant="primary">Add Story</b-button>
+            </b-container>
+        </b-modal>
+
+        <b-modal size="lg" v-bind="addBoardDataContainer" ref="addBoardModal" title="Add a Board">
+            <b-container>
+                <div>
+                    <b-form-input v-model="addBoardDataContainer.name" type="text"
+                                  placeholder="Board Name"></b-form-input>
+                </div>
+            </b-container>
+            <b-container slot="modal-footer">
+                <b-button v-on:click="addBoard()" variant="primary">Add Story</b-button>
             </b-container>
         </b-modal>
     </div>
@@ -115,6 +147,8 @@
                 taskModalDataContainer: {},
                 storyModalDataContainer: {},
                 addTaskDataContainer: {},
+                addStoryDataContainer: {},
+                addBoardDataContainer: {},
                 //UNTIL HERE
 
                 board: [],
@@ -200,12 +234,13 @@
                             id: 2,
                             rows: [1, 2, 3],
                             columns: [7, 6, 5],
-                            name: "überboard"
+                            name: "überboard",
+                            stories: []
                         }
                     ]
             }
         },
-       mounted() {
+        mounted() {
             this.$http.get("http://localhost:8080/rest/users").then(response => {
                 this.users = response.body;
             }, error => {
@@ -237,8 +272,12 @@
                                     board.stories.forEach(
                                         story => {
                                             this.$http.get("http://localhost:8080/rest/boards/" + board.id + "/stories/" + story.id + "/tasks").then(
-                                                response => { story.tasks = response.body; },
-                                                error => { console.error(error); }
+                                                response => {
+                                                    story.tasks = response.body;
+                                                },
+                                                error => {
+                                                    console.error(error);
+                                                }
                                             )
                                         }
                                     )
@@ -298,6 +337,10 @@
                 this.addTaskDataContainer.users = userNames;
                 this.$refs.addTaskModal.show();
             },
+            showAddStoryModal: function (board) {
+                this.addStoryDataContainer.board = board;
+                this.$refs.addStoryModal.show();
+            },
             moveTaskRight: function (board, task) {
                 if (task.state < board.states.length) {
                     task.state += 1;
@@ -324,6 +367,50 @@
 
                 this.addTaskDataContainer.story.tasks.push(task);
                 this.$refs.addTaskModal.hide();
+            },
+            addStory() {
+                let story = {
+                    id: null,
+                    title: this.addStoryDataContainer.title,
+                    description: this.addStoryDataContainer.description,
+                    startDate: "23 - 12 - 1993",
+                    creatDate: "24 - 12 - 1993",
+                    doneDate: "25 - 12 - 1993",
+                    tasks: []
+                };
+                this.addStoryDataContainer.board.stories.push(story);
+                this.$refs.addStoryModal.hide();
+            },
+            showAddBoardModal() {
+                this.$refs.addBoardModal.show();
+            },
+            addBoard() {
+                let board = {
+                    id: 1,
+                    name: this.addBoardDataContainer.name,
+                    states: [
+                        {
+                            id: 1,
+                            name: "in Progress"
+                        },
+                        {
+                            id: 2,
+                            name: "QA"
+                        },
+                        {
+                            id: 3,
+                            name: "Done"
+                        },
+                        {
+                            id: 4,
+                            name: "Live"
+                        }
+                    ],
+                    stories: []
+                };
+                this.dummyBoard.push(board);
+                this.$refs.addBoardModal.hide();
+
             }
         },
         computed: {}
@@ -357,9 +444,11 @@
     a {
         color: #42b983;
     }
+
     .taskCard {
         box-shadow: 4px 4px 2px grey;
     }
+
     .taskCard:hover {
         background-color: #b3b3b3;
     }
@@ -369,9 +458,14 @@
         color: whitesmoke;
     }
 
-    .addStoryButtn {
+    .addStoryButton {
         position: fixed;
         bottom: 0;
         left: 0;
+    }
+    .addBoardButton {
+        position: fixed;
+        bottom: 0;
+        right: 0;
     }
 </style>
