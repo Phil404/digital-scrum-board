@@ -5,7 +5,7 @@
                 <b-container fluid>
                     <b-row>
                         <b-col :cols="storyTitleCols"></b-col>
-                        <b-col v-for="state in board.states" :key="state.id">{{ state.name }}</b-col>
+                        <b-col v-for="state in board.states" :key="state.id"><h3>{{ state.name }}</h3></b-col>
                     </b-row>
                     <b-row v-for="story in board.stories" :key="story.id">
                         <b-col :cols="storyTitleCols">
@@ -14,7 +14,9 @@
                             <b-btn v-on:click="showAddTaskModal(story, board)" size="sm" variant="primary"> Add Task
                             </b-btn>
                             <b-btn v-on:click="showStoryModal(board, story)" size="sm" variant="secondary">Info</b-btn>
+                            <hr >
                         </b-col>
+
                         <b-col v-for="state in board.states" :key="state.id">
                             <b-card class="taskCard" v-show="insertTask(state,task)" :title="task.title"
                                     v-for="task in story.tasks"
@@ -30,10 +32,10 @@
                             </b-card>
                         </b-col>
                     </b-row>
+                    <b-button v-on:click="showAddStoryModal(board)" class="addStoryButton" size="sm" variant="outline-primary">Add Story</b-button>
                 </b-container>
-                <b-button v-on:click="showAddStoryModal(board)" class="addStoryButton" size="sm" variant="primary">Add Story</b-button>
             </b-tab>
-            <b-button v-on:click="showAddBoardModal()" class="addBoardButton" size="sm" variant="primary">Add Board</b-button>
+            <b-button v-on:click="showAddBoardModal()" class="addBoardButton" size="sm" variant="outline-danger">Add Board</b-button>
         </b-tabs>
 
 
@@ -92,11 +94,13 @@
                 <div>
                     <b-form-input v-model="addTaskDataContainer.taskName" type="text"
                                   placeholder="Task Name"></b-form-input>
+                    <br >
                     <b-form-textarea v-model="addTaskDataContainer.description" type="text"
                                      placeholder="Task Description" :rows="3"
                                      :max-rows="6">>
                     </b-form-textarea>
-                    <b-form-select v-model="addTaskDataContainer.assignee" :options="addTaskDataContainer.users"
+                    <br >
+                    <b-form-select disabled v-model="addTaskDataContainer.assignee" :options="addTaskDataContainer.users"
                                    class="mb-3"></b-form-select>
                 </div>
             </b-container>
@@ -110,6 +114,7 @@
                 <div>
                     <b-form-input v-model="addStoryDataContainer.title" type="text"
                                   placeholder="Story Name"></b-form-input>
+                    <br >
                     <b-form-textarea v-model="addStoryDataContainer.description" type="text"
                                      placeholder="Story Description" :rows="3"
                                      :max-rows="6">
@@ -179,7 +184,7 @@
                             stories: [
                                 {
                                     id: 1,
-                                    title: "story1",
+                                    title: "Implement big Thing",
                                     description: "do shit faster",
                                     startDate: "23 - 12 - 1993",
                                     creatDate: "24 - 12 - 1993",
@@ -199,7 +204,7 @@
                                             id: 3,
                                             state: 3,
                                             assignees: [1, 2],
-                                            title: "task #1",
+                                            title: "task #2",
                                             description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus consectetur facilisis eleifend. Sed neque tortor, condimentum non scelerisque feugiat, iaculis ut lectus.",
                                             startDate: "23 - 12 - 1994",
                                             creatDate: "24 - 12 - 1994",
@@ -209,7 +214,7 @@
                                 },
                                 {
                                     id: 3,
-                                    title: "story2",
+                                    title: "Do stuff in time",
                                     description: "do stuff faster",
                                     startDate: "12 - 12 - 1993",
                                     creatDate: "13 - 12 - 1993",
@@ -459,13 +464,11 @@
     }
 
     .addStoryButton {
-        position: fixed;
-        bottom: 0;
-        left: 0;
+        margin-top:10px;
     }
     .addBoardButton {
         position: fixed;
-        bottom: 0;
-        right: 0;
+        bottom: 20px;
+        left: 15px;
     }
 </style>
