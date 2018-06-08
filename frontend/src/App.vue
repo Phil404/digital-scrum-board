@@ -129,7 +129,7 @@
                 </div>
             </b-container>
             <b-container slot="modal-footer">
-                <b-button v-on:click="addBoard()" variant="primary">Add Story</b-button>
+                <b-button v-on:click="addBoard()" variant="primary">Add Board</b-button>
             </b-container>
         </b-modal>
     </div>
@@ -386,7 +386,7 @@
             },
             addBoard() {
                 let board = {
-                    id: 1,
+                    id: null,
                     name: this.addBoardDataContainer.name,
                     states: [
                         {
