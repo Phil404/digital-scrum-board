@@ -205,7 +205,7 @@
                     ]
             }
         },
-        mounted() {
+       mounted() {
             this.$http.get("http://localhost:8080/rest/users").then(response => {
                 this.users = response.body;
             }, error => {
@@ -321,7 +321,9 @@
                     creatDate: "24 - 12 - 1994",
                     doneDate: "25 - 12 - 1994"
                 };
-                console.log(task)
+
+                this.addTaskDataContainer.story.tasks.push(task);
+                this.$refs.addTaskModal.hide();
             }
         },
         computed: {}
@@ -355,7 +357,9 @@
     a {
         color: #42b983;
     }
-
+    .taskCard {
+        box-shadow: 4px 4px 2px grey;
+    }
     .taskCard:hover {
         background-color: #b3b3b3;
     }
