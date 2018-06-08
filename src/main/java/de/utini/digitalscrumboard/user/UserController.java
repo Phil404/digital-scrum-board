@@ -20,7 +20,7 @@ public class UserController {
 
     @GetMapping("/rest/users")
     public ResponseEntity getAllUsers() {
-        return ResponseEntity.ok(userRepository.findAll());
+        return ResponseEntity.ok(userRepository.findAll().stream().map(User::exportDTO));
     }
 
     @PostMapping("/rest/users")

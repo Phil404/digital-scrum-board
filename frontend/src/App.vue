@@ -30,7 +30,7 @@
                 </b-container>
             </b-tab>
         </b-tabs>
-        <b-modal  v-bind="taskModalDataContainer" ref="taskModal" :title="taskModalDataContainer.title">
+        <b-modal v-bind="taskModalDataContainer" ref="taskModal" :title="taskModalDataContainer.title">
             <b-container>
                 <b-row>
                     <b-col>
@@ -48,7 +48,9 @@
                     </b-col>
                 </b-row>
             </b-container>
-            <b-container slot="modal-footer"><b-button size="sm" variant="primary" v-on:click="hideModal">Close</b-button></b-container>
+            <b-container slot="modal-footer">
+                <b-button size="sm" variant="primary" v-on:click="hideModal">Close</b-button>
+            </b-container>
         </b-modal>
     </div>
 
@@ -65,19 +67,8 @@
                 taskModalDataContainer: {},
                 //UNTIL HERE
 
-                users: [
-                    {
-                        id: 1,
-                        name: "John Doe",
-                        role: "Developer"
-                    },
-                    {
-                        id: 2,
-                        name: "Aria Stark",
-                        role: "QA"
-                    }
-
-                ],
+                users: [],
+                boards: [],
                 dummyBoard:
                     [
                         {
@@ -160,7 +151,57 @@
                     ]
             }
         },
+        mounted() {
+            this.$http.get("http://localhost:8080/rest/users").then(response => {
+                this.users = response.body;
+            }, error => {
+                console.error(error);
+            });
+
+            this.collectData();
+        },
         methods: {
+            collectData: function () {
+                this.$http.get("http://localhost:8080/rest/boards").then(response => {
+                    this.boards = response.body;
+
+                    this.boards.forEach(
+                        board => {
+                            this.$http.get("http://localhost:8080/rest/boards/" + board.id + "/states").then(
+                                response => {
+                                    board.states = response.body;
+                                },
+                                error => {
+                                    console.error(error);
+                                }
+                            );
+
+                            this.$http.get("http://localhost:8080/rest/boards/" + board.id + "/stories").then(
+                                response => {
+                                    board.stories = response.body;
+
+                                    board.stories.forEach(
+                                        story => {
+                                            this.$http.get("http://localhost:8080/rest/boards/" + board.id + "/stories/" + story.id + "/tasks").then(
+                                                response => { story.tasks = response.body; },
+                                                error => { console.error(error); }
+                                            )
+                                        }
+                                    )
+                                },
+                                error => {
+                                    console.error(error);
+                                }
+                            )
+                        }
+                    );
+
+                    console.log(this.boards);
+                    console.log(this.dummyBoard);
+                }, error => {
+                    console.error(error);
+                });
+            },
             insertTask: function (state, task) {
                 if (state.id === task.state) {
                     return task.description
@@ -199,7 +240,7 @@
                     return false;
                 }
             },
-            hideModal: function() {
+            hideModal: function () {
                 this.$refs.taskModal.hide();
             }
         },
